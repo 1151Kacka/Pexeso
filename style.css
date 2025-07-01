@@ -1,0 +1,97 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    margin: 20px;
+}
+
+h1 {
+    color: #000000;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(10, 100px); /* 10 sloupce, každá karta 100px široká */
+    grid-gap: 10px; /* Mezera mezi kartami */
+    margin-top: 20px;
+    perspective: 1000px; /* Pro 3D efekt otáčení karet */
+}
+
+.card {
+    width: 100px;
+    height: 100px;
+    background-color: #ccc;
+    border: 2px solid #666;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+    border-radius: 8px;
+    position: relative; /* Pro umístění vnitřních stran */
+    transform-style: preserve-3d; /* Pro 3D efekt otáčení */
+    transition: transform 0.5s ease-in-out; /* Animace otáčení */
+}
+
+.card.flipped {
+    transform: rotateY(180deg); /* Otočení karty */
+}
+
+.card .card-inner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    backface-visibility: hidden; /* Skryje zadní stranu, když je otočena */
+}
+
+.card .card-front {
+    background-color: #007bff; /* Barva přední strany (rubu) */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+}
+
+.card .card-back {
+    background-color: #eee; /* Barva zadní strany (líce) */
+    color: #333;
+    transform: rotateY(180deg); /* Otočení zadní strany, aby byla viditelná po otočení karty */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+}
+
+.card.matched {
+    opacity: 0.5; /* Zprůhlednění spárovaných karet */
+    pointer-events: none; /* Zakázání klikání na spárované karty */
+}
+
+#game-info {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+#game-info p {
+    margin: 5px 0;
+}
+
+#game-info button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+#game-info button:hover {
+    background-color: #218838;
+}
