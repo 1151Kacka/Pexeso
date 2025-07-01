@@ -17,3 +17,38 @@
         <script src="script.js"></script>
     </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pexeso pro dva</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Pexeso pro dva hráče</h1>
+    <div id="game-container">
+        <div id="game-board">
+            <!-- Zde budou generovány karty JavaScriptem -->
+        </div>
+        <div id="pause-overlay" class="hidden">
+            <p>Hra pozastavena</p>
+        </div>
+    </div>
+    <div id="game-info">
+        <p>Hráč 1 skóre: <span id="player1-score">0</span></p>
+        <p>Hráč 2 skóre: <span id="player2-score">0</span></p>
+        <p>Na tahu: <span id="current-player">Hráč 1</span></p>
+        <div class="buttons-container">
+            <!-- Pro spuštění hry-->
+            <button id="start-button">Spustit hru</button>
+            <!--pauzu/pokračování. -->
+            <button id="pause-button" class="hidden">Pauza</button>
+            <!-- Nová hra-->
+            <button id="reset-button" class="hidden">Nová hra</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

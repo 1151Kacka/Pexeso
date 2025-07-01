@@ -10,7 +10,12 @@ body {
 h1 {
     color: #000000;
 }
-
+#game-container {
+    position: relative; 
+    margin-top: 20px;
+    width: fit-content;
+    height: fit-content;
+}
 #game-board {
     display: grid;
     grid-template-columns: repeat(10, 100px); /* 10 sloupce, každá karta 100px široká */
@@ -57,13 +62,20 @@ h1 {
 }
 
 .card .card-back {
-    background-color: #eee; /* Barva zadní strany (líce) */
+    background-color: #1b0b82; /* Barva zadní strany (líce) */
     color: #333;
     transform: rotateY(180deg); /* Otočení zadní strany, aby byla viditelná po otočení karty */
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 8px;
+}
+.card .card-image-front,
+.card .card-image-back {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
 }
 
 .card.matched {
@@ -80,8 +92,13 @@ h1 {
 #game-info p {
     margin: 5px 0;
 }
-
-#game-info button {
+.buttons-container { /* Styly pro nový kontejner tlačítek */
+    margin-top: 15px;
+    display: flex;
+    gap: 10px; /* Mezera mezi tlačítky */
+    justify-content: center;
+}
+buttons-container button {
     padding: 10px 20px;
     font-size: 1em;
     background-color: #28a745;
@@ -89,9 +106,32 @@ h1 {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 15px;
+    transition: background-color 0.3s ease; /* Plynulý přechod barvy */
 }
 
-#game-info button:hover {
+.buttons-container button:hover {
     background-color: #218838;
+}
+
+/* Styly pro skryté elementy */
+.hidden {
+    display: none !important; /* Použijeme !important pro přepsání jiných display vlastností */
+}
+
+/* Styly pro overlay pauzy */
+#pause-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Poloprůhledné černé pozadí */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    z-index: 10; /* Zajistí, že overlay je nad kartami */
+    border-radius: 8px; /* Zaoblené rohy jako karty */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Stín textu pro lepší čitelnost */
 }
