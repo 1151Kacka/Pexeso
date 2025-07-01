@@ -3,25 +3,28 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #ffffff;
+    background-color: #f0f0f0;
     margin: 20px;
 }
 
 h1 {
-    color: #000000;
+    color: #333;
 }
+
+/* UPRAVENO: Kontejner pro herní desku a overlay.
+   'position: relative' je klíčový pro správné pozicování #pause-overlay. */
 #game-container {
-    position: relative; 
+    position: relative;
     margin-top: 20px;
-    width: fit-content;
-    height: fit-content;
+    width: fit-content; /* Zajistí, že šířka kontejneru se přizpůsobí obsahu (kartám) */
+    height: fit-content; /* Zajistí, že výška kontejneru se přizpůsobí obsahu (kartám) */
 }
+
 #game-board {
     display: grid;
-    grid-template-columns: repeat(10, 100px); /* 10 sloupce, každá karta 100px široká */
-    grid-gap: 10px; /* Mezera mezi kartami */
-    margin-top: 20px;
-    perspective: 1000px; /* Pro 3D efekt otáčení karet */
+    grid-template-columns: repeat(4, 100px);
+    grid-gap: 10px;
+    perspective: 1000px;
 }
 
 .card {
@@ -32,16 +35,16 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2em;
     cursor: pointer;
     border-radius: 8px;
-    position: relative; /* Pro umístění vnitřních stran */
-    transform-style: preserve-3d; /* Pro 3D efekt otáčení */
-    transition: transform 0.5s ease-in-out; /* Animace otáčení */
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease-in-out;
+    overflow: hidden;
 }
 
 .card.flipped {
-    transform: rotateY(180deg); /* Otočení karty */
+    transform: rotateY(180deg);
 }
 
 .card .card-inner {
@@ -49,12 +52,11 @@ h1 {
     width: 100%;
     height: 100%;
     text-align: center;
-    backface-visibility: hidden; /* Skryje zadní stranu, když je otočena */
+    backface-visibility: hidden;
 }
 
 .card .card-front {
-    background-color: #007bff; /* Barva přední strany (rubu) */
-    color: white;
+    background-color: #007bff;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -62,14 +64,16 @@ h1 {
 }
 
 .card .card-back {
-    background-color: #1b0b82; /* Barva zadní strany (líce) */
-    color: #333;
-    transform: rotateY(180deg); /* Otočení zadní strany, aby byla viditelná po otočení karty */
+    background-color: #eee;
+    transform: rotateY(180deg);
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 8px;
+    padding: 5px;
+    box-sizing: border-box;
 }
+
 .card .card-image-front,
 .card .card-image-back {
     max-width: 100%;
@@ -79,8 +83,8 @@ h1 {
 }
 
 .card.matched {
-    opacity: 0.5; /* Zprůhlednění spárovaných karet */
-    pointer-events: none; /* Zakázání klikání na spárované karty */
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 #game-info {
@@ -92,13 +96,16 @@ h1 {
 #game-info p {
     margin: 5px 0;
 }
-.buttons-container { /* Styly pro nový kontejner tlačítek */
+
+/* NOVÉ: Styly pro kontejner tlačítek pro lepší rozložení. */
+.buttons-container {
     margin-top: 15px;
     display: flex;
     gap: 10px; /* Mezera mezi tlačítky */
     justify-content: center;
 }
-buttons-container button {
+
+.buttons-container button {
     padding: 10px 20px;
     font-size: 1em;
     background-color: #28a745;
@@ -106,19 +113,20 @@ buttons-container button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* Plynulý přechod barvy */
+    transition: background-color 0.3s ease;
 }
 
 .buttons-container button:hover {
     background-color: #218838;
 }
 
-/* Styly pro skryté elementy */
+/* NOVÉ: Univerzální třída pro skrytí elementů. Používá !important pro přepsání jiných display vlastností. */
 .hidden {
-    display: none !important; /* Použijeme !important pro přepsání jiných display vlastností */
+    display: none !important;
 }
 
-/* Styly pro overlay pauzy */
+/* NOVÉ: Styly pro overlay pauzy.
+   'position: absolute' a 'z-index' jsou klíčové pro překrytí herní desky. */
 #pause-overlay {
     position: absolute;
     top: 0;
@@ -134,4 +142,43 @@ buttons-container button {
     z-index: 10; /* Zajistí, že overlay je nad kartami */
     border-radius: 8px; /* Zaoblené rohy jako karty */
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Stín textu pro lepší čitelnost */
+}
+
+/* NOVÉ: Styly pro kontejner, kde se zobrazuje zajímavý fakt. */
+#fun-fact-display {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 450px; /* Omezí šířku pro lepší čitelnost */
+    text-align: center;
+    font-size: 1.1em;
+    color: #333;
+    min-height: 50px; /* Minimální výška, aby se layout moc neměnil při načítání */
+    display: flex; /* Pro centrování textu a spinneru */
+    align-items: center;
+    justify-content: center;
+    position: relative; /* Důležité pro pozicování spinneru uvnitř */
+}
+
+/* NOVÉ: Styly pro načítací indikátor (spinner). */
+#loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #007bff; /* Barva rotující části */
+    border-radius: 50%; /* Kruhový tvar */
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite; /* Animace rotace */
+    position: absolute; /* Absolutní pozicování uvnitř #fun-fact-display */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centrování spinneru */
+}
+
+/* NOVÉ: Definice animace pro spinner. */
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
 }

@@ -8,6 +8,11 @@ const resetButton = document.getElementById('reset-button'); // Tlačítko Nová
 const pauseButton = document.getElementById('pause-button'); // Tlačítko Pauza/Pokračovat
 const pauseOverlay = document.getElementById('pause-overlay'); // Overlay pro pauzu
 
+// Odkazy na elementy pro zobrazení faktu a spinner
+const funFactDisplay = document.getElementById('fun-fact-display');
+const funFactText = document.getElementById('fun-fact-text');
+const loadingSpinner = document.getElementById('loading-spinner');
+
 // Pole s obrázky
 const cardValues = [
     'images/1.jpg', 
@@ -78,6 +83,10 @@ function createBoard() {
     currentPlayerSpan.textContent = `Hráč ${currentPlayer}`;
     gameBoard.innerHTML = ''; // Vyprázdní herní plochu
     pauseOverlay.classList.add('hidden'); // Skryje overlay pauzy
+    // Skryje displej faktu a spinner na začátku nové hry
+    funFactDisplay.classList.add('hidden');
+    loadingSpinner.classList.add('hidden');
+    funFactText.textContent = ''; // Vyčistí text faktu
 
     // Skryje tlačítko "Start" a "Nová hra", zobrazí tlačítko "Pauza"
     startButton.classList.add('hidden');
@@ -145,6 +154,11 @@ function checkForMatch() {
             player2ScoreSpan.textContent = player2Score;
         }
 
+        // Pokud se karty shodují, zobraz zajímavý fakt
+        // Získá "apple" z "images/apple.jpg" pro použití v promptu pro AI
+        const cardTopic = card1.dataset.value.split('/').pop().split('.')[0];
+        displayFunFact(cardTopic);
+
         if (matchedPairs === cardValues.length / 2) {
             setTimeout(endGame, 500);
         }
@@ -185,10 +199,12 @@ function endGame() {
     // Používáme alert pro jednoduchost, v reálné aplikaci by se použil custom modal
     alert(`Hra skončila!\n${winnerMessage}\nNalezeno ${matchedPairs} párů.`);
 
-    // Zobrazí tlačítko "Nová hra" a skryje tlačítko "Pauza"
     resetButton.classList.remove('hidden');
     pauseButton.classList.add('hidden');
     gameBoard.innerHTML = ''; // Vyčistí desku po skončení hry
+    // Skryje displej faktu na konci hry
+    funFactDisplay.classList.add('hidden');
+    loadingSpinner.classList.add('hidden');
 }
 
 // Funkce pro pozastavení/spuštění hry
@@ -199,9 +215,54 @@ function togglePause() {
     if (isPaused) {
         pauseButton.textContent = 'Pokračovat'; // Změní text tlačítka
         pauseOverlay.classList.remove('hidden'); // Zobrazí overlay
+        // Skryje displej faktu, když je hra pozastavena
+        funFactDisplay.classList.add('hidden');
     } else {
         pauseButton.textContent = 'Pauza'; // Změní text tlačítka
         pauseOverlay.classList.add('hidden'); // Skryje overlay
+    }
+}
+
+// Funkce: Zobrazí zajímavý fakt pomocí Gemini API
+async function displayFunFact(topic) {
+    funFactText.textContent = ''; // Vyčistí předchozí fakt
+    funFactDisplay.classList.remove('hidden'); // Zobrazí kontejner faktu
+    loadingSpinner.classList.remove('hidden'); // Zobrazí spinner
+
+    try {
+        const prompt = `Napiš jednu krátkou a zajímavou fakt o: ${topic}. Odpověz pouze fakt, bez úvodu a závěru.`;
+        let chatHistory = [];
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { contents: chatHistory };
+        const apiKey = ""; // API klíč bude automaticky poskytnut v runtime
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.candidates && result.candidates.length > 0 &&
+            result.candidates[0].content && result.candidates[0].content.parts &&
+            result.candidates[0].content.parts.length > 0) {
+            const fact = result.candidates[0].content.parts[0].text;
+            funFactText.textContent = fact;
+        } else {
+            funFactText.textContent = "Nepodařilo se získat zajímavý fakt.";
+        }
+    } catch (error) {
+        console.error("Chyba při získávání faktu z Gemini API:", error);
+        funFactText.textContent = "Chyba při načítání faktu.";
+    } finally {
+        loadingSpinner.classList.add('hidden'); // Skryje spinner
+        // Skryje fakt po 5 sekundách
+        setTimeout(() => {
+            funFactDisplay.classList.add('hidden');
+            funFactText.textContent = '';
+        }, 5000);
     }
 }
 
@@ -217,6 +278,10 @@ resetButton.addEventListener('click', () => { // Nová hra - po kliknutí se hra
     player1ScoreSpan.textContent = player1Score;
     player2ScoreSpan.textContent = player2Score;
     currentPlayerSpan.textContent = `Hráč 1`;
+    // Skryje displej faktu při resetu
+    funFactDisplay.classList.add('hidden');
+    loadingSpinner.classList.add('hidden');
+    funFactText.textContent = '';
 });
 pauseButton.addEventListener('click', togglePause); // Pauza/Pokračovat
 
@@ -228,4 +293,8 @@ document.addEventListener('DOMContentLoaded', () => {
     resetButton.classList.add('hidden'); // Skryje tlačítko Nová hra
     pauseButton.classList.add('hidden'); // Skryje tlačítko Pauza
     pauseOverlay.classList.add('hidden'); // Skryje overlay
+    // Skryje displej faktu při inicializaci
+    funFactDisplay.classList.add('hidden');
+    loadingSpinner.classList.add('hidden');
+    funFactText.textContent = '';
 });

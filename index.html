@@ -1,37 +1,21 @@
 <!DOCTYPE html>
 <html lang="cs">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Pexeso</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <h1>PEXESO</h1>
-        <div id="game-board"></div>
-        <div id="game-info">
-        <p>Hráč 1 skóre: <span id="player1-score">0</span></p>
-        <p>Hráč 2 skóre: <span id="player2-score">0</span></p>
-        <p>Na tahu: <span id="current-player">Hráč 1</span></p>
-        <button id="reset-button">Nová hra</button></div>
-        <script src="script.js"></script>
-    </body>
-</html>
-
-<!DOCTYPE html>
-<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pexeso pro dva</title>
+    <!-- Propojení s externím CSS souborem pro stylování -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Pexeso pro dva hráče</h1>
+    <!-- Kontejner pro herní desku a overlay pro pauzu. Důležité pro pozicování overlaye. -->
     <div id="game-container">
         <div id="game-board">
             <!-- Zde budou generovány karty JavaScriptem -->
         </div>
+        <!-- Overlay, který se zobrazí, když je hra pozastavena.
+             Zpočátku má třídu 'hidden', aby byl skrytý. -->
         <div id="pause-overlay" class="hidden">
             <p>Hra pozastavena</p>
         </div>
@@ -40,15 +24,18 @@
         <p>Hráč 1 skóre: <span id="player1-score">0</span></p>
         <p>Hráč 2 skóre: <span id="player2-score">0</span></p>
         <p>Na tahu: <span id="current-player">Hráč 1</span></p>
+        <!-- Kontejner pro lepší uspořádání tlačítek. -->
         <div class="buttons-container">
-            <!-- Pro spuštění hry-->
+            <!-- Tlačítko pro spuštění hry. Zpočátku viditelné. -->
             <button id="start-button">Spustit hru</button>
-            <!--pauzu/pokračování. -->
+            <!-- Tlačítko pro pauzu/pokračování. Zpočátku skryté. -->
             <button id="pause-button" class="hidden">Pauza</button>
-            <!-- Nová hra-->
+            <!-- Tlačítko "Nová hra" je nyní zpočátku skryté. -->
             <button id="reset-button" class="hidden">Nová hra</button>
         </div>
     </div>
+
+    <!-- Propojení s externím JavaScript souborem. Umístění na konci body zajišťuje, že HTML elementy budou načteny dříve. -->
     <script src="script.js"></script>
 </body>
 </html>
