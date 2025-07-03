@@ -28,8 +28,8 @@ h1 {
 .card {
     width: 100px;
     height: 100px;
-     /* Tato barva bude viditelná jen krátce při otáčení */
-    border: 2px solid #666;
+    
+    /*border: 2px solid #666;*/
     cursor: pointer;
     border-radius: 8px;
     position: relative;
@@ -39,71 +39,51 @@ h1 {
 }
 
 .card.flipped {
-    transform: rotateY(180deg); /* Otočí celou kartu o 180 stupňů */
+    transform: rotateY(180deg); 
 }
 
 .card .card-front {
-    /* background-color: #007bff; /* Původní barva pozadí, můžete ji vrátit, pokud se obrázky zobrazí */
-    /*background-color: transparent; /* Zkuste transparentní pozadí pro testování */
+    background-color: black;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 8px;
-
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
     backface-visibility: hidden;
-   
+    transform: rotateY(0deg);
+    z-index: 2; 
 }
 
-
-/*.card .card-back {
-    /*display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    padding: 5px;
-    box-sizing: border-box;
-
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    backface-visibility: hidden;
-    /* OPRAVENO: Odstraněn duplicitní transform. Toto je jediný, který by zde měl být. 
-    transform: rotateY(180deg);
-    z-index: 1;
-}*/
 .card .card-back {
-    background-color: #eee;
-    transform: rotateY(180deg);
+    
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 8px;
     padding: 5px;
     box-sizing: border-box;
-    /* Původně bez absolutní pozice, ale pro přesné překrytí je to lepší */
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
+    
+    z-index: 1; 
 }
+
 
 .card .card-image-front,
 .card .card-image-back {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    border-radius: 4px;
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain; 
+    border-radius: 4px; 
+    display: block;
 }
-
-
 .card.matched {
     opacity: 0.5;
     pointer-events: none;
@@ -154,13 +134,13 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Poloprůhledné černé pozadí */
+    background-color: rgba(0, 0, 0, 0.7); 
     color: white;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 2em;
-    z-index: 10; /* Zajistí, že overlay je nad kartami */
-    border-radius: 8px; /* Zaoblené rohy jako karty */
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Stín textu pro lepší čitelnost */
+    z-index: 10;
+    border-radius: 8px; 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); 
 }
