@@ -98,13 +98,11 @@ function createBoard() {
         card.dataset.index = index;
 
         card.innerHTML = `
-            <div class="card-inner">
-                <div class="card-front">
-                    <img src="${cardBackImage}" alt="Rub karty" class="card-image-front">
-                </div>
-                <div class="card-back">
-                    <img src="${imagePath}" alt="Pexeso karta" class="card-image-back">
-                </div>
+            <div class="card-front">
+                <img src="${cardBackImage}" alt="Rub karty" class="card-image-front">
+            </div>
+            <div class="card-back">
+                <img src="${imagePath}" alt="Pexeso karta" class="card-image-back">
             </div>
         `;
         
@@ -112,6 +110,7 @@ function createBoard() {
         gameBoard.appendChild(card);
     });
 }
+
 
 // Funkce pro otočení karty
 function flipCard() {
