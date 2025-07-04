@@ -9,33 +9,42 @@
 </head>
 <body>
     <h1>Pexeso pro dva hráče</h1>
-    <!-- Kontejner pro herní desku a overlay pro pauzu. Důležité pro pozicování overlaye. -->
-    <div id="game-container">
+
+    <!-- Kontejner pro výběr počtu párů -->
+    <div id="pair-selection-container">
+        <p>Zadejte počet párů karet (min. 4, max. 20):</p>
+        <input type="number" id="num-pairs-input" min="4" max="20" value="8">
+        <br></br>
+        <div class="buttons-container"> <button id="start-button">Spustit hru</button></div>
+       
+        <p id="pair-error-message" class="hidden error-message">Prosím zadejte číslo mezi 4 a 20.</p>
+    </div>
+
+    <!-- Kontejner pro herní desku a overlay pro pauzu. Zpočátku skryto v HTML. -->
+    <div id="game-container" class="hidden">
         <div id="game-board">
             <!-- Zde budou generovány karty JavaScriptem -->
         </div>
-        <!-- Overlay, který se zobrazí, když je hra pozastavena.
-             Zpočátku má třídu 'hidden', aby byl skrytý. -->
+        <!-- Overlay, který se zobrazí, když je hra pozastavena. -->
         <div id="pause-overlay" class="hidden">
             <p>Hra pozastavena</p>
         </div>
     </div>
-    <div id="game-info">
+    <!-- Informační panel hry. Zpočátku skryto v HTML. -->
+    <div id="game-info" class="hidden">
         <p>Hráč 1 skóre: <span id="player1-score">0</span></p>
         <p>Hráč 2 skóre: <span id="player2-score">0</span></p>
         <p>Na tahu: <span id="current-player">Hráč 1</span></p>
-        <!-- Kontejner pro lepší uspořádání tlačítek. -->
+        <!-- Kontejner pro tlačítka. -->
         <div class="buttons-container">
-            <!-- Tlačítko pro spuštění hry. Zpočátku viditelné. -->
-            <button id="start-button">Spustit hru</button>
             <!-- Tlačítko pro pauzu/pokračování. Zpočátku skryté. -->
             <button id="pause-button" class="hidden">Pauza</button>
-            <!-- Tlačítko "Nová hra" je nyní zpočátku skryté. -->
+            <!-- Tlačítko "Nová hra" je zpočátku skryté. -->
             <button id="reset-button" class="hidden">Nová hra</button>
         </div>
     </div>
 
-    <!-- Propojení s externím JavaScript souborem. Umístění na konci body zajišťuje, že HTML elementy budou načteny dříve. -->
+    <!-- Propojení s externím JavaScript souborem. -->
     <script src="script.js"></script>
 </body>
 </html>

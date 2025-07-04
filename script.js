@@ -8,63 +8,55 @@ const resetButton = document.getElementById('reset-button'); // Tlačítko Nová
 const pauseButton = document.getElementById('pause-button'); // Tlačítko Pauza/Pokračovat
 const pauseOverlay = document.getElementById('pause-overlay'); // Overlay pro pauzu
 
+// Získání odkazů na hlavní herní kontejnery
+const gameContainer = document.getElementById('game-container');
+const gameInfo = document.getElementById('game-info');
 
-// Pole s obrázky
-const cardValues = [
-    'images/1.jpg', 
-    'images/1.jpg', 
-    'images/2.jpg',
-    'images/2.jpg',
-    'images/3.jpg',
-    'images/3.jpg',
-    'images/4.jpg',
-    'images/4.jpg',
-    'images/5.jpg',
-    'images/5.jpg',
-    'images/6.jpg',
-    'images/6.jpg',
-    'images/7.jpg',
-    'images/7.jpg',
-    'images/8.jpg',
-    'images/8.jpg',
-    'images/9.jpg',
-    'images/9.jpg',
-    'images/10.jpg',
-    'images/10.jpg',
-    'images/11.jpg',
-    'images/11.jpg',
-    'images/12.jpg',
-    'images/12.jpg'];
-//ZAdní strana karet
-const cardBackImage = 'images/ZStr.jpg';
+// Odkazy na elementy pro výběr počtu párů
+const pairSelectionContainer = document.getElementById('pair-selection-container');
+const numPairsInput = document.getElementById('num-pairs-input');
+const pairErrorMessage = document.getElementById('pair-error-message');
+
+// Funkce: Generuje pole cest k obrázkům pro karty
+function generateCardValues(baseImagePathPrefix, numberOfUniqueImages, fileExtension) {
+    const values = [];
+    for (let i = 1; i <= numberOfUniqueImages; i++) {
+        const imagePath = `${baseImagePathPrefix}${i}${fileExtension}`;
+        values.push(imagePath);
+        values.push(imagePath); // Každý obrázek přidáme dvakrát pro pár
+    }
+    return values;
+}
+
+// Proměnná pro uložení skutečných hodnot karet, bude naplněna po výběru uživatele
+let cardValues = [];
+
+// Cesta k obrázku pro PŘEDNÍ STRANU (rub) všech karet
+const cardBackImage = 'background/ZStr.jpg';
+
 // Proměnné pro stav hry
-let shuffledCards = []; // Promícháné karty
-let flippedCards = []; // Pole pro uložení právě otočených karet (max. 2)
-let matchedPairs = 0; // Počet nalezených párů
-let player1Score = 0; // Skóre hráče 1
-let player2Score = 0; // Skóre hráče 2
-let currentPlayer = 1; // Aktuální hráč (1 nebo 2)
-let lockBoard = false; // Zabrání otáčení dalších karet, dokud se nezpracují dvě otočené karty
-let isPaused = false; // Proměnná pro stav pauzy
+let shuffledCards = [];
+let flippedCards = [];
+let matchedPairs = 0;
+let player1Score = 0;
+let player2Score = 0;
+let currentPlayer = 1;
+let lockBoard = false;
+let isPaused = false;
 
 // Funkce pro promíchání pole (Fisher-Yates algoritmus)
 function shuffle(array) {
     let currentIndex = array.length, randomIndex;
-
-    // Dokud zbývají prvky k promíchání...
     while (currentIndex !== 0) {
-        // Vyber zbývající prvek...
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-
-        // A prohoď ho se současným prvkem.
         [array[currentIndex], array[randomIndex]] = [
             array[randomIndex], array[currentIndex]];
     }
     return array;
 }
 
-// Funkce pro vytvoření herního pole
+// Funkce pro vytvoření herního pole (SPUŠTĚNÍ HRY) - nyní volána z startGame()
 function createBoard() {
     // Vynulování skóre a stavu hry
     player1Score = 0;
@@ -79,12 +71,10 @@ function createBoard() {
     currentPlayerSpan.textContent = `Hráč ${currentPlayer}`;
     gameBoard.innerHTML = ''; // Vyprázdní herní plochu
     pauseOverlay.classList.add('hidden'); // Skryje overlay pauzy
-   
 
-    // Skryje tlačítko "Start" a "Nová hra", zobrazí tlačítko "Pauza"
-    startButton.classList.add('hidden');
-    resetButton.classList.add('hidden');
+    // Zobrazí tlačítko "Pauza" a skryje "Nová hra"
     pauseButton.classList.remove('hidden');
+    resetButton.classList.add('hidden');
     pauseButton.textContent = 'Pauza'; // Nastaví text tlačítka na "Pauza"
 
     // Promícháme karty
@@ -99,10 +89,10 @@ function createBoard() {
 
         card.innerHTML = `
             <div class="card-front">
-                <img src="${cardBackImage}" alt="Rub karty" class="card-image-front">
+                <img src="${cardBackImage}" alt="Rub karty" class="card-image-front" onerror="this.onerror=null;this.src='https://placehold.co/100x100/CCCCCC/000000?text=CHYBA+OBR%C3%81ZKU';">
             </div>
             <div class="card-back">
-                <img src="${imagePath}" alt="Pexeso karta" class="card-image-back">
+                <img src="${imagePath}" alt="Pexeso karta" class="card-image-back" onerror="this.onerror=null;this.src='https://placehold.co/100x100/EEEEEE/000000?text=CHYBA+OBR%C3%81ZKU';">
             </div>
         `;
         
@@ -111,10 +101,8 @@ function createBoard() {
     });
 }
 
-
 // Funkce pro otočení karty
 function flipCard() {
-    // Pokud je zamčená deska, hra je pozastavena, nebo karta je již otočená/spárovaná, nedělej nic
     if (lockBoard || isPaused || this.classList.contains('flipped') || this.classList.contains('matched')) {
         return;
     }
@@ -146,11 +134,6 @@ function checkForMatch() {
             player2ScoreSpan.textContent = player2Score;
         }
 
-        // Pokud se karty shodují, zobraz zajímavý fakt
-        // Získá "apple" z "images/apple.jpg" pro použití v promptu pro AI
-        //const cardTopic = card1.dataset.value.split('/').pop().split('.')[0];
-        //displayFunFact(cardTopic);
-
         if (matchedPairs === cardValues.length / 2) {
             setTimeout(endGame, 500);
         }
@@ -178,7 +161,7 @@ function switchPlayer() {
     currentPlayerSpan.textContent = `Hráč ${currentPlayer}`;
 }
 
-// Funkce pro konec hry
+// Funkce pro konec hry (volá se po dokončení všech párů)
 function endGame() {
     let winnerMessage = '';
     if (player1Score > player2Score) {
@@ -188,13 +171,11 @@ function endGame() {
     } else {
         winnerMessage = 'Remíza!';
     }
-    // Používáme alert pro jednoduchost, v reálné aplikaci by se použil custom modal
     alert(`Hra skončila!\n${winnerMessage}\nNalezeno ${matchedPairs} párů.`);
 
     resetButton.classList.remove('hidden');
     pauseButton.classList.add('hidden');
     gameBoard.innerHTML = ''; // Vyčistí desku po skončení hry
-   
 }
 
 // Funkce pro pozastavení/spuštění hry
@@ -205,37 +186,66 @@ function togglePause() {
     if (isPaused) {
         pauseButton.textContent = 'Pokračovat'; // Změní text tlačítka
         pauseOverlay.classList.remove('hidden'); // Zobrazí overlay
-        // Skryje displej faktu, když je hra pozastavena
-        //funFactDisplay.classList.add('hidden');
     } else {
         pauseButton.textContent = 'Pauza'; // Změní text tlačítka
         pauseOverlay.classList.add('hidden'); // Skryje overlay
     }
 }
 
-// Posluchače událostí pro tlačítka
-startButton.addEventListener('click', createBoard); // Spustí hru
-resetButton.addEventListener('click', () => { // Nová hra - po kliknutí se hra resetuje a zobrazí se tlačítko "Spustit hru"
-    resetButton.classList.add('hidden'); // Skryje tlačítko Nová hra
-    startButton.classList.remove('hidden'); // Zobrazí tlačítko Start
-    // Vyčistí desku a resetuje skóre, ale nezačne hru hned
-    gameBoard.innerHTML = '';
+// Funkce: Resetuje hru do počátečního stavu (výběr počtu párů)
+function resetGameToInitialState() {
+    gameBoard.innerHTML = ''; // Vyčistí herní desku
     player1Score = 0;
     player2Score = 0;
     player1ScoreSpan.textContent = player1Score;
     player2ScoreSpan.textContent = player2Score;
     currentPlayerSpan.textContent = `Hráč 1`;
-   
-});
+    pauseOverlay.classList.add('hidden'); // Skryje overlay pauzy
+    isPaused = false; // Zajistí, že hra není pozastavena
+
+    // Skryje herní UI a zobrazí výběr počtu párů
+    gameContainer.classList.add('hidden');
+    gameInfo.classList.add('hidden');
+    pauseButton.classList.add('hidden'); // Skryje tlačítko Pauza
+    resetButton.classList.add('hidden'); // Skryje tlačítko Nová hra
+
+    pairSelectionContainer.classList.remove('hidden'); // Zobrazí kontejner pro výběr párů
+    startButton.classList.remove('hidden'); // Zobrazí tlačítko Spustit hru
+    pairErrorMessage.classList.add('hidden'); // Skryje chybovou zprávu
+}
+
+// Funkce: Spustí hru s vybraným počtem párů
+function startGame() { // Přejmenováno z startGameWithSelectedPairs
+    const numPairs = parseInt(numPairsInput.value); // Získá hodnotu z inputu a převede na číslo
+    const maxUniqueImages = 20; // Maximální počet unikátních obrázků (párů)
+    const minUniqueImages = 4; // Minimální počet unikátních obrázků (párů)
+
+    // Validace vstupu
+    if (isNaN(numPairs) || numPairs < minUniqueImages || numPairs > maxUniqueImages) {
+        pairErrorMessage.classList.remove('hidden'); // Zobrazí chybovou zprávu
+        return; // Zastaví funkci, pokud je vstup neplatný
+    } else {
+        pairErrorMessage.classList.add('hidden'); // Skryje chybovou zprávu
+    }
+
+    // Naplníme cardValues na základě uživatelského vstupu
+    cardValues = generateCardValues('images/', numPairs, '.jpg');
+
+    // Skryje výběr párů a zobrazí herní UI
+    pairSelectionContainer.classList.add('hidden');
+    gameContainer.classList.remove('hidden');
+    gameInfo.classList.remove('hidden');
+
+    createBoard(); // Spustí hru s vygenerovanými kartami
+}
+
+
+// Posluchače událostí pro tlačítka
+startButton.addEventListener('click', startGame); // Tlačítko "Spustit hru" nyní spouští hru
+resetButton.addEventListener('click', resetGameToInitialState); // Tlačítko "Nová hra" volá resetGameToInitialState
 pauseButton.addEventListener('click', togglePause); // Pauza/Pokračovat
 
-// Inicializace: Skryjeme herní desku a zobrazíme pouze tlačítko "Spustit hru"
-// Toto je voláno pouze jednou při načtení stránky
+// Inicializace: Skryjeme herní UI a zobrazíme pouze výběr počtu párů
 document.addEventListener('DOMContentLoaded', () => {
-    gameBoard.innerHTML = ''; // Zajistí, že deska je prázdná na začátku
-    startButton.classList.remove('hidden'); // Zobrazí tlačítko Start
-    resetButton.classList.add('hidden'); // Skryje tlačítko Nová hra
-    pauseButton.classList.add('hidden'); // Skryje tlačítko Pauza
-    pauseOverlay.classList.add('hidden'); // Skryje overlay
-   
+    resetGameToInitialState(); // Používá novou funkci pro inicializaci
 });
