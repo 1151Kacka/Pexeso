@@ -7,15 +7,14 @@ const startButton = document.getElementById('start-button'); // Tlačítko Spust
 const resetButton = document.getElementById('reset-button'); // Tlačítko Nová hra
 const pauseButton = document.getElementById('pause-button'); // Tlačítko Pauza/Pokračovat
 const pauseOverlay = document.getElementById('pause-overlay'); // Overlay pro pauzu
-
-// Získání odkazů na hlavní herní kontejnery
 const gameContainer = document.getElementById('game-container');
 const gameInfo = document.getElementById('game-info');
-
-// Odkazy na elementy pro výběr počtu párů
+const mainGameArea = document.getElementById('main-game-area')
 const pairSelectionContainer = document.getElementById('pair-selection-container');
 const numPairsInput = document.getElementById('num-pairs-input');
 const pairErrorMessage = document.getElementById('pair-error-message');
+const endGameMessageContainer = document.getElementById('end-game-message-container'); 
+const endGameMessageText = document.getElementById('end-game-message-text');     
 
 // Funkce: Generuje pole cest k obrázkům pro karty
 function generateCardValues(baseImagePathPrefix, numberOfUniqueImages, fileExtension) {
@@ -131,7 +130,7 @@ function checkForMatch() {
             player1ScoreSpan.textContent = player1Score;
         } else {
             player2Score++;
-            player2ScoreSpan.textContent = player2Score;
+            player2ScoreSpan.textContent = player2Score; 
         }
 
         if (matchedPairs === cardValues.length / 2) {
@@ -162,6 +161,7 @@ function switchPlayer() {
 }
 
 // Funkce pro konec hry (volá se po dokončení všech párů)
+// Funkce pro konec hry (volá se po dokončení všech párů)
 function endGame() {
     let winnerMessage = '';
     if (player1Score > player2Score) {
@@ -171,9 +171,13 @@ function endGame() {
     } else {
         winnerMessage = 'Remíza!';
     }
-    alert(`Hra skončila!\n${winnerMessage}\nNalezeno ${matchedPairs} párů.`);
-
-    resetButton.classList.remove('hidden');
+    
+    // ZMĚNA: Místo alertu se nyní zobrazí zpráva v novém kontejneru
+    endGameMessageText.textContent = `Hra skončila!\n ${winnerMessage}\n Nalezeno ${matchedPairs} párů. Chcete hrát znovu?`;
+    endGameMessageContainer.classList.remove('hidden'); // NOVÉ: Zobrazí kontejner zprávy o konci hry
+    resetButton.classList.remove('hidden'); 
+  
+    mainGameArea.classList.add('hidden'); // NOVÉ: Skryje hlavní herní oblast
     pauseButton.classList.add('hidden');
     gameBoard.innerHTML = ''; // Vyčistí desku po skončení hry
 }
@@ -194,6 +198,7 @@ function togglePause() {
 
 // Funkce: Resetuje hru do počátečního stavu (výběr počtu párů)
 function resetGameToInitialState() {
+    console.log("'Nová hra' button clicked. Resetting game to initial state.");
     gameBoard.innerHTML = ''; // Vyčistí herní desku
     player1Score = 0;
     player2Score = 0;
@@ -203,11 +208,10 @@ function resetGameToInitialState() {
     pauseOverlay.classList.add('hidden'); // Skryje overlay pauzy
     isPaused = false; // Zajistí, že hra není pozastavena
 
-    // Skryje herní UI a zobrazí výběr počtu párů
-    gameContainer.classList.add('hidden');
-    gameInfo.classList.add('hidden');
-    pauseButton.classList.add('hidden'); // Skryje tlačítko Pauza
-    resetButton.classList.add('hidden'); // Skryje tlačítko Nová hra
+    // ZMĚNA: Skryje herní UI a zprávu o konci hry, zobrazí výběr počtu párů
+    mainGameArea.classList.add('hidden'); // NOVÉ: Skryje hlavní herní oblast
+    pauseButton.classList.add('hidden');
+    endGameMessageContainer.classList.add('hidden'); // NOVÉ: Skryje zprávu o konci hry
 
     pairSelectionContainer.classList.remove('hidden'); // Zobrazí kontejner pro výběr párů
     startButton.classList.remove('hidden'); // Zobrazí tlačítko Spustit hru
@@ -215,26 +219,22 @@ function resetGameToInitialState() {
 }
 
 // Funkce: Spustí hru s vybraným počtem párů
-function startGame() { // Přejmenováno z startGameWithSelectedPairs
-    const numPairs = parseInt(numPairsInput.value); // Získá hodnotu z inputu a převede na číslo
-    const maxUniqueImages = 20; // Maximální počet unikátních obrázků (párů)
-    const minUniqueImages = 4; // Minimální počet unikátních obrázků (párů)
+function startGame() {
+    const numPairs = parseInt(numPairsInput.value);
+    const maxUniqueImages = 20;
+    const minUniqueImages = 4;
 
-    // Validace vstupu
     if (isNaN(numPairs) || numPairs < minUniqueImages || numPairs > maxUniqueImages) {
-        pairErrorMessage.classList.remove('hidden'); // Zobrazí chybovou zprávu
-        return; // Zastaví funkci, pokud je vstup neplatný
+        pairErrorMessage.classList.remove('hidden');
+        return;
     } else {
-        pairErrorMessage.classList.add('hidden'); // Skryje chybovou zprávu
+        pairErrorMessage.classList.add('hidden');
     }
 
-    // Naplníme cardValues na základě uživatelského vstupu
     cardValues = generateCardValues('images/', numPairs, '.jpg');
 
-    // Skryje výběr párů a zobrazí herní UI
     pairSelectionContainer.classList.add('hidden');
-    gameContainer.classList.remove('hidden');
-    gameInfo.classList.remove('hidden');
+    mainGameArea.classList.remove('hidden'); 
 
     createBoard(); // Spustí hru s vygenerovanými kartami
 }
