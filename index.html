@@ -14,6 +14,16 @@
         <h1 class="main-title">Pexeso pro dva hráče</h1> <!-- Hlavní nadpis stránky -->
         <p>Zadejte počet párů karet (min. 4, max. 20):</p>
         <input type="number" id="num-pairs-input" min="4" max="20" value="8">
+        <br></br>
+        <div id="theme-selection">
+            <p>Vyberte téma:</p>
+            <label>
+                <input type="radio" name="theme" value="fruits" checked> Ovoce
+            </label>
+            <label>
+                <input type="radio" name="theme" value="vegetables"> Zelenina
+            </label>
+        </div>
         <br>
         <div class="buttons-container">
             <button id="start-button">Spustit hru</button>
