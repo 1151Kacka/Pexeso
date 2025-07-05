@@ -8,10 +8,23 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Pexeso pro dva hráče</h1>
+     <div id="game-info" class="hidden">
+        <h1>Pexeso pro dva hráče</h1>
+        <p>Hráč 1 skóre: <span id="player1-score">0</span></p>
+        <p>Hráč 2 skóre: <span id="player2-score">0</span></p>
+        <p>Na tahu: <span id="current-player">Hráč 1</span></p>
+        <!-- Kontejner pro tlačítka. -->
+        <div class="buttons-container">
+            <!-- Tlačítko pro pauzu/pokračování. Zpočátku skryté. -->
+            <button id="pause-button" class="hidden">Pauza</button>
+            <!-- Tlačítko "Nová hra" je zpočátku skryté. -->
+            <button id="reset-button" class="hidden">Nová hra</button>
+        </div>
+    </div>
 
     <!-- Kontejner pro výběr počtu párů -->
     <div id="pair-selection-container">
+        <h1>Pexeso pro dva hráče</h1>
         <p>Zadejte počet párů karet (min. 4, max. 20):</p>
         <input type="number" id="num-pairs-input" min="4" max="20" value="8">
         <br></br>
@@ -31,18 +44,7 @@
         </div>
     </div>
     <!-- Informační panel hry. Zpočátku skryto v HTML. -->
-    <div id="game-info" class="hidden">
-        <p>Hráč 1 skóre: <span id="player1-score">0</span></p>
-        <p>Hráč 2 skóre: <span id="player2-score">0</span></p>
-        <p>Na tahu: <span id="current-player">Hráč 1</span></p>
-        <!-- Kontejner pro tlačítka. -->
-        <div class="buttons-container">
-            <!-- Tlačítko pro pauzu/pokračování. Zpočátku skryté. -->
-            <button id="pause-button" class="hidden">Pauza</button>
-            <!-- Tlačítko "Nová hra" je zpočátku skryté. -->
-            <button id="reset-button" class="hidden">Nová hra</button>
-        </div>
-    </div>
+   
 
     <!-- Propojení s externím JavaScript souborem. -->
     <script src="script.js"></script>

@@ -3,12 +3,18 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f0f0f0;
+    /*background-color: #fff;*/
     margin: 20px;
+    background-image: url('background/pozadí.jpg'); /* Zde vložte cestu k vašemu obrázku */
+    background-size: cover; /* Zajistí, že obrázek pokryje celou plochu */
+    background-position: center; /* Centruje obrázek */
+    background-repeat: no-repeat; /* Zabrání opakování obrázku */
+    background-attachment: fixed; /* Zajistí, že pozadí se nebude posouvat s obsahem */
 }
 
+
 h1 {
-    color: #333;
+    color: #000000;
 }
 
 #game-container {
@@ -27,11 +33,11 @@ h1 {
 #pair-selection-container {
     margin-top: 50px;
     padding: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid #432003;
     border-radius: 10px;
-    background-color: #fff;
+    background-color: #6d3910;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(247, 31, 31, 0.1);
 }
 .error-message {
     color: red;
@@ -41,8 +47,7 @@ h1 {
 .card {
     width: 100px;
     height: 100px;
-    
-    border: 2px solid #9d9b9b;
+    border: 2px solid #5b390c;
     cursor: pointer;
     border-radius: 8px;
     position: relative;
@@ -84,7 +89,7 @@ h1 {
     height: 100%;
     top: 0;
     left: 0;
-    
+    background-color: #ffffff;
     z-index: 1; 
 }
 
@@ -103,9 +108,13 @@ h1 {
 }
 
 #game-info {
-    margin-top: 30px;
+    margin-top: 50px;
+    padding: 20px;
     text-align: center;
-    font-size: 1.2em;
+    color: #000000;
+    border: 1px solid #432003;
+    border-radius: 10px;
+    background-color: #6d3910;
 }
 
 #game-info p {
