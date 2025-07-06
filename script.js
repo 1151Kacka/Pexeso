@@ -2,7 +2,9 @@
 const gameBoard = document.getElementById('game-board'); // Herní plocha
 const player1ScoreSpan = document.getElementById('player1-score'); // Zobrazení skóre hráče 1
 const player2ScoreSpan = document.getElementById('player2-score'); // Zobrazení skóre hráče 2
-const currentPlayerSpan = document.getElementById('current-player'); // Zobrazení aktuálního hráče
+const player1NameDisplay = document.getElementById('player1-name-display');
+const player2NameDisplay = document.getElementById('player2-name-display');
+const currentPlayerDisplay = document.getElementById('current-player-display');
 const startButton = document.getElementById('start-button'); // Tlačítko Spustit hru
 const resetButton = document.getElementById('reset-button'); // Tlačítko Nová hra
 const pauseButton = document.getElementById('pause-button'); // Tlačítko Pauza/Pokračovat
@@ -16,6 +18,10 @@ const pairErrorMessage = document.getElementById('pair-error-message');
 const endGameMessageContainer = document.getElementById('end-game-message-container'); 
 const endGameMessageText = document.getElementById('end-game-message-text');     
 const themeSelection = document.getElementById('theme-selection');
+
+//jméno hráčů
+const player1NameInput = document.getElementById('player1-name-input');
+const player2NameInput = document.getElementById('player2-name-input');
 
 // Funkce: Generuje pole cest k obrázkům pro karty
 function generateCardValues(themeFolder, numberOfUniqueImages, fileExtension) {
@@ -45,6 +51,9 @@ let player2Score = 0;
 let currentPlayer = 1;
 let lockBoard = false;
 let isPaused = false;
+let player1Name = "Hráč 1";
+let player2Name = "Hráč 2";
+
 
 // Funkce pro promíchání pole (Fisher-Yates algoritmus)
 function shuffle(array) {
@@ -70,7 +79,10 @@ function createBoard() {
 
     player1ScoreSpan.textContent = player1Score;
     player2ScoreSpan.textContent = player2Score;
-    currentPlayerSpan.textContent = `Hráč ${currentPlayer}`;
+    // Používáme jména hráčů pro zobrazení aktuálního hráče
+    currentPlayerDisplay.textContent = player1Name; // Začíná hráč 1
+    player1NameDisplay.textContent = player1Name;
+    player2NameDisplay.textContent = player2Name;
     gameBoard.innerHTML = ''; // Vyprázdní herní plochu
     pauseOverlay.classList.add('hidden'); // Skryje overlay pauzy
 
@@ -160,29 +172,30 @@ function resetFlippedCards() {
 // Funkce pro přepnutí hráče
 function switchPlayer() {
     currentPlayer = currentPlayer === 1 ? 2 : 1;
-    currentPlayerSpan.textContent = `Hráč ${currentPlayer}`;
+    currentPlayerDisplay.textContent = currentPlayer === 1 ? player1Name : player2Name;
 }
+
 
 // Funkce pro konec hry (volá se po dokončení všech párů)
 // Funkce pro konec hry (volá se po dokončení všech párů)
 function endGame() {
     let winnerMessage = '';
     if (player1Score > player2Score) {
-        winnerMessage = 'Hráč 1 vyhrál!';
+        winnerMessage = `${player1Name} vyhrál!`; // Používá jméno hráče 1
     } else if (player2Score > player1Score) {
-        winnerMessage = 'Hráč 2 vyhrál!';
+        winnerMessage = `${player2Name} vyhrál!`; // Používá jméno hráče 2
     } else {
         winnerMessage = 'Remíza!';
     }
     
-    // ZMĚNA: Místo alertu se nyní zobrazí zpráva v novém kontejneru
-    endGameMessageText.textContent = `Hra skončila!\n ${winnerMessage}\n Nalezeno ${matchedPairs} párů. Chcete hrát znovu?`;
-    endGameMessageContainer.classList.remove('hidden'); // NOVÉ: Zobrazí kontejner zprávy o konci hry
+    endGameMessageText.textContent = `Hra skončila!\n${winnerMessage}\nNalezeno ${matchedPairs} párů. Chcete hrát znovu?`;
+    endGameMessageContainer.classList.remove('hidden');
     resetButton.classList.remove('hidden'); 
-  
-    mainGameArea.classList.add('hidden'); // NOVÉ: Skryje hlavní herní oblast
+    console.log("Konec hry. Kontejner se zprávou a tlačítko 'Nová hra' jsou viditelné.");
+
+    mainGameArea.classList.add('hidden');
     pauseButton.classList.add('hidden');
-    gameBoard.innerHTML = ''; // Vyčistí desku po skončení hry
+    gameBoard.innerHTML = '';
 }
 
 // Funkce pro pozastavení/spuštění hry
@@ -207,7 +220,12 @@ function resetGameToInitialState() {
     player2Score = 0;
     player1ScoreSpan.textContent = player1Score;
     player2ScoreSpan.textContent = player2Score;
-    currentPlayerSpan.textContent = `Hráč 1`;
+    player1NameDisplay.textContent = "Hráč 1";
+    player2NameDisplay.textContent = "Hráč 2";
+    currentPlayerDisplay.textContent = "Hráč 1"; // Výchozí text
+    player1NameInput.value = "";
+    player2NameInput.value = "";
+
     pauseOverlay.classList.add('hidden');
     isPaused = false;
 
@@ -237,6 +255,16 @@ function startGame() {
         pairErrorMessage.classList.add('hidden');
     }
 
+    player1Name = player1NameInput.value.trim();
+    player2Name = player2NameInput.value.trim();
+
+    // Pokud jméno není zadáno, použijeme výchozí "Hráč 1" / "Hráč 2"
+    if (player1Name === "") {
+        player1Name = "Hráč 1";
+    }
+    if (player2Name === "") {
+        player2Name = "Hráč 2";
+    }
   
     const selectedThemeRadio = document.querySelector('input[name="theme"]:checked');
     // Pokud nic není vybráno, nastavíme výchozí téma na 'fruits'

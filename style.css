@@ -120,8 +120,36 @@ h1 {
 #game-info p {
     margin: 5px 0;
 }
+#player1-name-display, #player2-name-display, #current-player-display {
+    font-weight: bold;
+    color: #000000; 
+}
 
+.player-names-input {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    display: inline-block;
+    text-align: left; 
+}
 
+.player-names-input label {
+    display: inline-block; 
+    margin-right: 10px;
+    font-weight: bold;
+    margin-bottom: 5px; 
+}
+
+.player-names-input input[type="text"] {
+    padding: 8px;
+    font-size: 1em;
+    background-color: #cf8659;
+    border-radius: 5px;
+    width: 150px; 
+    margin-bottom: 10px; 
+    border:none;
+}
 .buttons-container {
     margin-top: 15px;
     display: flex;

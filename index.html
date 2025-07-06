@@ -14,7 +14,17 @@
         <h1 class="main-title">Pexeso pro dva hráče</h1> <!-- Hlavní nadpis stránky -->
         <p>Zadejte počet párů karet (min. 4, max. 20):</p>
         <input type="number" id="num-pairs-input" min="4" max="20" value="8">
-        <br></br>
+        <br>
+        <div class="player-names-input">
+            <label for="player1-name-input">Jméno hráče 1:</label>
+            
+            <input type="text" id="player1-name-input" placeholder="Hráč 1">
+            <br>
+            <label for="player2-name-input">Jméno hráče 2:</label>
+            
+            <input type="text" id="player2-name-input" placeholder="Hráč 2">
+        </div>
+        <br>
         <div id="theme-selection">
             <p>Vyberte téma:</p>
             <label>
@@ -47,9 +57,9 @@
         <!-- Informační panel hry. -->
         <div id="game-info">
             <h1 class="main-title">Pexeso pro dva hráče</h1> <!-- Hlavní nadpis stránky -->
-            <p>Hráč 1 skóre: <span id="player1-score">0</span></p>
-            <p>Hráč 2 skóre: <span id="player2-score">0</span></p>
-            <p>Na tahu: <span id="current-player">Hráč 1</span></p>
+            <p><span id="player1-name-display">Hráč 1</span> skóre: <span id="player1-score">0</span></p>
+            <p><span id="player2-name-display">Hráč 2</span> skóre: <span id="player2-score">0</span></p>
+           <p>Na tahu: <span id="current-player-display">Hráč 1</span></p>
             <!-- Tlačítko pro pauzu/pokračování. Zpočátku skryté. -->
             <div class="buttons-container">
                 <button id="pause-button" class="hidden">Pauza</button>
