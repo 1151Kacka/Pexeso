@@ -18,6 +18,12 @@ const pairErrorMessage = document.getElementById('pair-error-message');
 const endGameMessageContainer = document.getElementById('end-game-message-container'); 
 const endGameMessageText = document.getElementById('end-game-message-text');     
 const themeSelection = document.getElementById('theme-selection');
+const stopwatchDisplay = document.getElementById('stopwatch-display');
+
+// Proměnné pro stopky
+let startTime; // Čas, kdy stopky začaly (timestamp)
+let elapsedTime = 0; // Uplynulý čas v sekundách
+let timerInterval; // ID intervalu pro stopky (pro clearInterval)
 
 //jméno hráčů
 const player1NameInput = document.getElementById('player1-name-input');
@@ -174,11 +180,41 @@ function switchPlayer() {
     currentPlayer = currentPlayer === 1 ? 2 : 1;
     currentPlayerDisplay.textContent = currentPlayer === 1 ? player1Name : player2Name;
 }
+// NOVÉ: Funkce pro spuštění stopek
+function startTimer() {
+    console.log("Stopky spuštěny.");
+    startTime = Date.now(); // Zaznamená aktuální čas
+    timerInterval = setInterval(updateTimerDisplay, 1000); // Aktualizuje každou sekundu
+    updateTimerDisplay(); // Okamžitá aktualizace pro zobrazení 00:00
+}
 
+// NOVÉ: Funkce pro zastavení stopek
+function stopTimer() {
+    console.log("Stopky zastaveny.");
+    clearInterval(timerInterval); // Zastaví interval
+    // elapsedTime je již aktualizován v updateTimerDisplay nebo můžeme vypočítat finální čas zde
+    elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Vypočítá konečný uplynulý čas
+}
+
+// NOVÉ: Funkce pro aktualizaci zobrazení stopek
+function updateTimerDisplay() {
+    if (!isPaused) { // Aktualizuje čas jen pokud hra není pozastavena
+        elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Uplynulý čas v sekundách
+        const minutes = Math.floor(elapsedTime / 60);
+        const seconds = elapsedTime % 60;
+        const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        if (stopwatchDisplay) {
+            stopwatchDisplay.textContent = formattedTime;
+        } else {
+            console.error("CHYBA: stopwatchDisplay je null v updateTimerDisplay().");
+        }
+    }
+}
 
 // Funkce pro konec hry (volá se po dokončení všech párů)
 // Funkce pro konec hry (volá se po dokončení všech párů)
 function endGame() {
+     stopTimer(); // Zastaví stopky
     let winnerMessage = '';
     if (player1Score > player2Score) {
         winnerMessage = `${player1Name} vyhrál!`; // Používá jméno hráče 1
@@ -187,8 +223,11 @@ function endGame() {
     } else {
         winnerMessage = 'Remíza!';
     }
-    
-    endGameMessageText.textContent = `Hra skončila!\n${winnerMessage}\nNalezeno ${matchedPairs} párů. Chcete hrát znovu?`;
+    const minutes = Math.floor(elapsedTime / 60);
+    const seconds = elapsedTime % 60;
+    const finalTimeFormatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+    endGameMessageText.textContent = `Hra skončila!\n${winnerMessage}\nNalezeno ${matchedPairs} párů.\nČas hry: ${finalTimeFormatted}\nChcete hrát znovu?`;
     endGameMessageContainer.classList.remove('hidden');
     resetButton.classList.remove('hidden'); 
     console.log("Konec hry. Kontejner se zprávou a tlačítko 'Nová hra' jsou viditelné.");
@@ -206,9 +245,12 @@ function togglePause() {
     if (isPaused) {
         pauseButton.textContent = 'Pokračovat'; // Změní text tlačítka
         pauseOverlay.classList.remove('hidden'); // Zobrazí overlay
+        clearInterval(timerInterval);
     } else {
         pauseButton.textContent = 'Pauza'; // Změní text tlačítka
         pauseOverlay.classList.add('hidden'); // Skryje overlay
+        startTime = Date.now() - (elapsedTime * 1000); // Obnoví startTime, aby stopky pokračovaly od správného času
+        timerInterval = setInterval(updateTimerDisplay, 1000);
     }
 }
 
@@ -225,6 +267,14 @@ function resetGameToInitialState() {
     currentPlayerDisplay.textContent = "Hráč 1"; // Výchozí text
     player1NameInput.value = "";
     player2NameInput.value = "";
+
+    clearInterval(timerInterval); // Zastaví případné běžící stopky
+    elapsedTime = 0; // Vynuluje uplynulý čas
+    if (stopwatchDisplay) { // Zkontroluje, zda element existuje
+        stopwatchDisplay.textContent = "00:00"; // Nastaví zobrazení stopek na výchozí hodnotu
+    } else {
+        console.error("CHYBA: stopwatchDisplay je null v resetGameToInitialState().");
+    }
 
     pauseOverlay.classList.add('hidden');
     isPaused = false;
@@ -280,6 +330,7 @@ function startGame() {
     console.log("pairSelectionContainer skryt, mainGameArea by měl být viditelný.");
 
     createBoard(); // Spustí hru s vygenerovanými kartami
+    startTimer();
 }
 
 
