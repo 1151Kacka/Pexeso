@@ -37,6 +37,7 @@
         <br>
         <div class="buttons-container">
             <button id="start-button">Spustit hru</button>
+            <button id="show-results-button">Zobrazit výsledky</button>
         </div>
         <p id="pair-error-message" class="hidden error-message">Prosím zadejte číslo mezi 4 a 20.</p>
     </div>
@@ -50,6 +51,28 @@
         </div>
     </div>
     
+    <div id="results-container" class="hidden">
+        <h2>Výsledky předešlých her</h2>
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>Hráč 1</th>
+                    <th>Hráč 2</th>
+                    <th>Skóre 1</th>
+                    <th>Skóre 2</th>
+                    <th>Párů</th>
+                    <th>Čas</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Zde se budou dynamicky vkládat výsledky -->
+            </tbody>
+        </table>
+        <div class="buttons-container">
+            <!-- Tlačítko pro návrat na úvodní obrazovku z tabulky výsledků -->
+            <button id="back-to-menu-button">Zpět na menu</button>
+        </div>
+    </div>
 
 
     <!-- Hlavní kontejner pro herní desku a informační panel, pro jejich uspořádání vedle sebe -->

@@ -19,6 +19,11 @@ const endGameMessageContainer = document.getElementById('end-game-message-contai
 const endGameMessageText = document.getElementById('end-game-message-text');     
 const themeSelection = document.getElementById('theme-selection');
 const stopwatchDisplay = document.getElementById('stopwatch-display');
+const showResultsButton = document.getElementById('show-results-button');
+const resultsContainer = document.getElementById('results-container');
+const resultsTableBody = document.querySelector('#results-table tbody');
+const backToMenuButton = document.getElementById('back-to-menu-button');
+
 
 // Proměnné pro stopky
 let startTime; // Čas, kdy stopky začaly (timestamp)
@@ -211,30 +216,102 @@ function updateTimerDisplay() {
     }
 }
 
-// Funkce pro konec hry (volá se po dokončení všech párů)
-// Funkce pro konec hry (volá se po dokončení všech párů)
+// Funkce pro uložení výsledku hry do localStorage
+function saveGameResult() {
+    const results = JSON.parse(localStorage.getItem('pexesoResults') || '[]');
+    const currentNumPairs = cardValues.length / 2; // Počet párů ve hře
+    const result = {
+        player1: player1Name,
+        player2: player2Name,
+        score1: player1Score,
+        score2: player2Score,
+        pairs: currentNumPairs,
+        time: stopwatchDisplay.textContent, // Použijeme formátovaný čas ze zobrazení
+        date: new Date().toLocaleString() // Datum a čas pro záznam
+    };
+    results.push(result);
+    localStorage.setItem('pexesoResults', JSON.stringify(results));
+    console.log("Výsledek hry uložen:", result);
+}
+function showScreen(screenIdToShow) {
+    const screens = [
+        pairSelectionContainer,
+        mainGameArea,
+        endGameMessageContainer,
+        resultsContainer
+    ];
+
+    screens.forEach(screen => {
+        if (screen && screen.id === screenIdToShow) {
+            screen.classList.remove('hidden');
+            console.log(`Zobrazen kontejner: ${screen.id}`);
+        } else if (screen) {
+            screen.classList.add('hidden');
+            console.log(`Skryt kontejner: ${screen.id}`);
+        }
+    });
+}
+
+
+// ZMĚNA: Funkce pro načtení a zobrazení výsledků z localStorage
+function loadAndDisplayResults() {
+    console.log("loadAndDisplayResults() voláno.");
+    const results = JSON.parse(localStorage.getItem('pexesoResults') || '[]');
+
+    resultsTableBody.innerHTML = ''; // Vyčistí tabulku před přidáním nových dat
+
+    if (results.length === 0) {
+        const noResultsRow = resultsTableBody.insertRow();
+        const cell = noResultsRow.insertCell();
+        cell.colSpan = 6; // Pokryje všechny sloupce
+        cell.textContent = "Zatím žádné výsledky.";
+        cell.style.textAlign = "center";
+        console.log("Žádné výsledky k zobrazení.");
+    } else {
+        results.forEach(result => {
+            const row = resultsTableBody.insertRow();
+            row.insertCell().textContent = result.player1;
+            row.insertCell().textContent = result.player2;
+            row.insertCell().textContent = result.score1;
+            row.insertCell().textContent = result.score2;
+            row.insertCell().textContent = result.pairs;
+            row.insertCell().textContent = result.time;
+        });
+        console.log("Výsledky načteny a zobrazeny:", results);
+    }
+
+    // ZMĚNA: Používá showScreen pro zobrazení výsledků
+    showScreen('results-container');
+}
+
+
+// Funkce pro konec hry - nyní ukládá výsledek
 function endGame() {
-     stopTimer(); // Zastaví stopky
+    stopTimer(); // Zastaví stopky
+    saveGameResult(); // Uloží výsledek hry
+
     let winnerMessage = '';
     if (player1Score > player2Score) {
-        winnerMessage = `${player1Name} vyhrál!`; // Používá jméno hráče 1
+        winnerMessage = `${player1Name} vyhrál!`;
     } else if (player2Score > player1Score) {
-        winnerMessage = `${player2Name} vyhrál!`; // Používá jméno hráče 2
+        winnerMessage = `${player2Name} vyhrál!`;
     } else {
         winnerMessage = 'Remíza!';
     }
+    
+    // Formátování uplynulého času pro zprávu
     const minutes = Math.floor(elapsedTime / 60);
     const seconds = elapsedTime % 60;
     const finalTimeFormatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
     endGameMessageText.textContent = `Hra skončila!\n${winnerMessage}\nNalezeno ${matchedPairs} párů.\nČas hry: ${finalTimeFormatted}\nChcete hrát znovu?`;
-    endGameMessageContainer.classList.remove('hidden');
-    resetButton.classList.remove('hidden'); 
+    showScreen('end-game-message-container');
+    resetButton.classList.remove('hidden'); // Tlačítko "Nová hra" se zobrazí spolu se zprávou
     console.log("Konec hry. Kontejner se zprávou a tlačítko 'Nová hra' jsou viditelné.");
 
-    mainGameArea.classList.add('hidden');
-    pauseButton.classList.add('hidden');
-    gameBoard.innerHTML = '';
+    // Ostatní kontejnery budou skryty funkcí showScreen
+    gameBoard.innerHTML = ''; // Vyčistí herní plochu
+    pauseButton.classList.add('hidden'); // Skryje tlačítko pauzy
 }
 
 // Funkce pro pozastavení/spuštění hry
@@ -338,6 +415,19 @@ function startGame() {
 startButton.addEventListener('click', startGame); // Tlačítko "Spustit hru" nyní spouští hru
 resetButton.addEventListener('click', resetGameToInitialState); // Tlačítko "Nová hra" volá resetGameToInitialState
 pauseButton.addEventListener('click', togglePause); // Pauza/Pokračovat
+if (showResultsButton) {
+    showResultsButton.addEventListener('click', loadAndDisplayResults);
+    console.log("Posluchač událostí připojen k tlačítku 'Zobrazit výsledky'.");
+} else {
+    console.error("CHYBA: Tlačítko 'Zobrazit výsledky' (showResultsButton) nebylo nalezeno!");
+}
+// Posluchač událostí pro tlačítko "Zpět na menu"
+if (backToMenuButton) {
+    backToMenuButton.addEventListener('click', resetGameToInitialState);
+    console.log("Posluchač událostí připojen k tlačítku 'Zpět na menu'.");
+} else {
+    console.error("CHYBA: Tlačítko 'Zpět na menu' (backToMenuButton) nebylo nalezeno!");
+}
 
 // Inicializace: Skryjeme herní UI a zobrazíme pouze výběr počtu párů
 document.addEventListener('DOMContentLoaded', () => {
