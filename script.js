@@ -356,15 +356,15 @@ function resetGameToInitialState() {
     pauseOverlay.classList.add('hidden');
     isPaused = false;
 
-    // Skryje herní UI a zprávu o konci hry, zobrazí výběr počtu párů a tématu
-    mainGameArea.classList.add('hidden');
+    showScreen('pair-selection-container');
+    startButton.classList.remove('hidden'); // Zobrazí tlačítko "Spustit hru"
+    showResultsButton.classList.remove('hidden'); // Zobrazí tlačítko "Zobrazit výsledky"
+    pairErrorMessage.classList.add('hidden'); // Skryje chybovou zprávu
+
+   
     pauseButton.classList.add('hidden');
     endGameMessageContainer.classList.add('hidden');
     resetButton.classList.add('hidden'); 
-
-    pairSelectionContainer.classList.remove('hidden'); // Zobrazí kontejner pro výběr párů
-    startButton.classList.remove('hidden'); // Zobrazí tlačítko Spustit hru
-    pairErrorMessage.classList.add('hidden'); // Skryje chybovou zprávu
 }
 
 // Funkce: Spustí hru s vybraným počtem párů
@@ -402,19 +402,27 @@ function startGame() {
     console.log("Generované cesty k obrázkům (cardValues):", cardValues);
 
     // Skryje výběr párů a zobrazí herní UI (beze změny)
-    pairSelectionContainer.classList.add('hidden');
-    mainGameArea.classList.remove('hidden');
-    console.log("pairSelectionContainer skryt, mainGameArea by měl být viditelný.");
+   showScreen('main-game-area');
+    
+    // Ostatní tlačítka a kontejnery budou skryty funkcí showScreen
+    startButton.classList.add('hidden');
+    showResultsButton.classList.add('hidden');
 
-    createBoard(); // Spustí hru s vygenerovanými kartami
+    createBoard();
     startTimer();
 }
 
 
 // Posluchače událostí pro tlačítka
-startButton.addEventListener('click', startGame); // Tlačítko "Spustit hru" nyní spouští hru
-resetButton.addEventListener('click', resetGameToInitialState); // Tlačítko "Nová hra" volá resetGameToInitialState
-pauseButton.addEventListener('click', togglePause); // Pauza/Pokračovat
+startButton.addEventListener('click', startGame);
+if (resetButton) {
+    resetButton.addEventListener('click', resetGameToInitialState);
+    console.log("Posluchač událostí připojen k tlačítku 'Nová hra'.");
+} else {
+    console.error("CHYBA: Tlačítko 'Nová hra' (resetButton) nebylo nalezeno!");
+}
+pauseButton.addEventListener('click', togglePause);
+// Posluchač událostí pro tlačítko "Zobrazit výsledky"
 if (showResultsButton) {
     showResultsButton.addEventListener('click', loadAndDisplayResults);
     console.log("Posluchač událostí připojen k tlačítku 'Zobrazit výsledky'.");
