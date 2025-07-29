@@ -39,6 +39,7 @@ h1 {
     text-align: center;
     box-shadow: 0 4px 8px rgba(247, 31, 31, 0.1);
 }
+
 .error-message {
     color: red;
     margin-top: 10px;
@@ -224,22 +225,30 @@ h1 {
     padding: 10px;
     border-radius: 8px;
     background-color: #6d3910;
-    display: inline-block;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 20px;
+    max-width: 300px; 
+    margin-left: auto; 
+    margin-right: auto;
 }
 
 #theme-selection p {
     margin-bottom: 10px;
     font-weight: bold;
+    grid-column: 1 / -1;
 }
 
 #theme-selection label {
-    margin: 0 10px; /* Mezera mezi jednotlivými radio buttony */
+    display: block;
+    margin: 5px 0; 
     cursor: pointer;
     font-size: 1em;
+    text-align: left;
 }
 
 #theme-selection input[type="radio"] {
-    margin-right: 5px; /* Mezera mezi radio buttonem a textem */
+    margin-right: 5px; 
 }
 #end-game-message-container p {
     margin-bottom: 20px;
