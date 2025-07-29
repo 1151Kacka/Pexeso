@@ -23,7 +23,7 @@ const showResultsButton = document.getElementById('show-results-button');
 const resultsContainer = document.getElementById('results-container');
 const resultsTableBody = document.querySelector('#results-table tbody');
 const backToMenuButton = document.getElementById('back-to-menu-button');
-
+const endGameButton = document.getElementById('end-game-button');
 
 // Proměnné pro stopky
 let startTime; // Čas, kdy stopky začaly (timestamp)
@@ -286,9 +286,17 @@ function loadAndDisplayResults() {
 
 
 // Funkce pro konec hry - nyní ukládá výsledek
-function endGame() {
-    stopTimer(); // Zastaví stopky
-    saveGameResult(); // Uloží výsledek hry
+function endGame(forceEnd = false) { // Přidán parametr forceEnd
+    if (!forceEnd) { // Pokud není vynucené ukončení (např. z tlačítka)
+        // Místo alert() použijeme jednoduchou simulaci potvrzení
+        const confirmEnd = window.confirm("Opravdu chcete ukončit hru? Váš aktuální pokrok nebude uložen.");
+        if (!confirmEnd) {
+            return; // Pokud uživatel zruší, neukončujeme hru
+        }
+    }
+
+    stopTimer();
+    // saveGameResult(); // Výsledek se ukládá pouze po dokončení hry, ne při předčasném ukončení
 
     let winnerMessage = '';
     if (player1Score > player2Score) {
@@ -299,19 +307,24 @@ function endGame() {
         winnerMessage = 'Remíza!';
     }
     
-    // Formátování uplynulého času pro zprávu
     const minutes = Math.floor(elapsedTime / 60);
     const seconds = elapsedTime % 60;
     const finalTimeFormatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-    endGameMessageText.textContent = `Hra skončila!\n${winnerMessage}\nNalezeno ${matchedPairs} párů.\nČas hry: ${finalTimeFormatted}\nChcete hrát znovu?`;
+    // ZMĚNA: Zpráva o konci hry pro předčasné ukončení
+    if (forceEnd) {
+        endGameMessageText.textContent = `Hra byla předčasně ukončena.\nNalezeno ${matchedPairs} párů.\nČas hry: ${finalTimeFormatted}\nChcete hrát znovu?`;
+    } else {
+        endGameMessageText.textContent = `Hra skončila!\n${winnerMessage}\nNalezeno ${matchedPairs} párů.\nČas hry: ${finalTimeFormatted}\nChcete hrát znovu?`;
+    }
+
     showScreen('end-game-message-container');
-    resetButton.classList.remove('hidden'); // Tlačítko "Nová hra" se zobrazí spolu se zprávou
+    resetButton.classList.remove('hidden'); 
     console.log("Konec hry. Kontejner se zprávou a tlačítko 'Nová hra' jsou viditelné.");
 
-    // Ostatní kontejnery budou skryty funkcí showScreen
-    gameBoard.innerHTML = ''; // Vyčistí herní plochu
-    pauseButton.classList.add('hidden'); // Skryje tlačítko pauzy
+    gameBoard.innerHTML = '';
+    pauseButton.classList.add('hidden');
+    endGameButton.classList.add('hidden'); // Skryje tlačítko ukončení hry
 }
 
 // Funkce pro pozastavení/spuštění hry
@@ -363,6 +376,7 @@ function resetGameToInitialState() {
 
    
     pauseButton.classList.add('hidden');
+    endGameButton.classList.add('hidden'); 
     endGameMessageContainer.classList.add('hidden');
     resetButton.classList.add('hidden'); 
 }
@@ -408,6 +422,8 @@ function startGame() {
     startButton.classList.add('hidden');
     showResultsButton.classList.add('hidden');
 
+    endGameButton.classList.remove('hidden');
+
     createBoard();
     startTimer();
 }
@@ -435,6 +451,13 @@ if (backToMenuButton) {
     console.log("Posluchač událostí připojen k tlačítku 'Zpět na menu'.");
 } else {
     console.error("CHYBA: Tlačítko 'Zpět na menu' (backToMenuButton) nebylo nalezeno!");
+}
+//Posluchač událostí pro tlačítko ukončení hry
+if (endGameButton) {
+    endGameButton.addEventListener('click', () => endGame(true)); // Volá endGame s forceEnd=true
+    console.log("Posluchač událostí připojen k tlačítku 'Ukončit hru'.");
+} else {
+    console.error("CHYBA: Tlačítko 'Ukončit hru' (endGameButton) nebylo nalezeno!");
 }
 
 // Inicializace: Skryjeme herní UI a zobrazíme pouze výběr počtu párů
