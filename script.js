@@ -185,7 +185,7 @@ function switchPlayer() {
     currentPlayer = currentPlayer === 1 ? 2 : 1;
     currentPlayerDisplay.textContent = currentPlayer === 1 ? player1Name : player2Name;
 }
-// NOVÉ: Funkce pro spuštění stopek
+// Funkce pro spuštění stopek
 function startTimer() {
     console.log("Stopky spuštěny.");
     startTime = Date.now(); // Zaznamená aktuální čas
@@ -193,7 +193,7 @@ function startTimer() {
     updateTimerDisplay(); // Okamžitá aktualizace pro zobrazení 00:00
 }
 
-// NOVÉ: Funkce pro zastavení stopek
+// Funkce pro zastavení stopek
 function stopTimer() {
     console.log("Stopky zastaveny.");
     clearInterval(timerInterval); // Zastaví interval
@@ -201,7 +201,7 @@ function stopTimer() {
     elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Vypočítá konečný uplynulý čas
 }
 
-// NOVÉ: Funkce pro aktualizaci zobrazení stopek
+// Funkce pro aktualizaci zobrazení stopek
 function updateTimerDisplay() {
     if (!isPaused) { // Aktualizuje čas jen pokud hra není pozastavena
         elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Uplynulý čas v sekundách
@@ -253,7 +253,7 @@ function showScreen(screenIdToShow) {
 }
 
 
-// ZMĚNA: Funkce pro načtení a zobrazení výsledků z localStorage
+// Funkce pro načtení a zobrazení výsledků z localStorage
 function loadAndDisplayResults() {
     console.log("loadAndDisplayResults() voláno.");
     const results = JSON.parse(localStorage.getItem('pexesoResults') || '[]');
@@ -280,21 +280,20 @@ function loadAndDisplayResults() {
         console.log("Výsledky načteny a zobrazeny:", results);
     }
 
-    // ZMĚNA: Používá showScreen pro zobrazení výsledků
     showScreen('results-container');
 }
 
 
 // Funkce pro konec hry - nyní ukládá výsledek
 function endGame(forceEnd = false) { // Přidán parametr forceEnd
-    if (!forceEnd) { // Pokud není vynucené ukončení (např. z tlačítka)
+    /*if (!forceEnd) { // Pokud není vynucené ukončení (např. z tlačítka)
         // Místo alert() použijeme jednoduchou simulaci potvrzení
         const confirmEnd = window.confirm("Opravdu chcete ukončit hru? Váš aktuální pokrok nebude uložen.");
         if (!confirmEnd) {
             return; // Pokud uživatel zruší, neukončujeme hru
         }
     }
-
+*/
     stopTimer();
     // saveGameResult(); // Výsledek se ukládá pouze po dokončení hry, ne při předčasném ukončení
 
@@ -311,7 +310,7 @@ function endGame(forceEnd = false) { // Přidán parametr forceEnd
     const seconds = elapsedTime % 60;
     const finalTimeFormatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-    // ZMĚNA: Zpráva o konci hry pro předčasné ukončení
+    // Zpráva o konci hry pro předčasné ukončení
     if (forceEnd) {
         endGameMessageText.textContent = `Hra byla předčasně ukončena.\nNalezeno ${matchedPairs} párů.\nČas hry: ${finalTimeFormatted}\nChcete hrát znovu?`;
     } else {
